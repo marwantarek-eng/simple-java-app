@@ -18,30 +18,17 @@ pipeline {
         }
 
         stage('Build & Package') {
-            agent {
-                docker {
-                    image 'maven:3.8.6-openjdk-11'
-                    // جينكنز هيسيف الـ dependencies هنا عشان ميتنزلوش كل مرة
-                    args '-v /var/jenkins_home/.m2:/root/.m2' 
-                }
-            }
             steps {
-                echo 'Building Java Application inside Maven Agent...'
-                // بنرن الأمر علطول والنظام شايل الـ Workspace لوحده!
-                sh 'mvn clean package -DskipTests'
+                echo 'Building Java Application using Maven Container...'
+                // استخدمنا المسار الداخلي الفعلي لجينكنز عشان يربطه صح
+                sh 'docker run --rm -v /var/jenkins_home/.m2:/root/.m2 -v /var/jenkins_home/workspace/jenkins-java-iti:/app -w /app maven:3.8.6-openjdk-11 mvn clean package -DskipTests'
             }
         }
 
         stage('Test') {
-            agent {
-                docker {
-                    image 'maven:3.8.6-openjdk-11'
-                    args '-v /var/jenkins_home/.m2:/root/.m2'
-                }
-            }
             steps {
-                echo 'Running Unit Tests inside Maven Agent...'
-                sh 'mvn test'
+                echo 'Running Unit Tests...'
+                sh 'docker run --rm -v /var/jenkins_home/.m2:/root/.m2 -v /var/jenkins_home/workspace/jenkins-java-iti:/app -w /app maven:3.8.6-openjdk-11 mvn test'
             }
         }
 
