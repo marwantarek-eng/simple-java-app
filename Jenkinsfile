@@ -7,7 +7,7 @@ pipeline {
         IMAGE_NAME           = 'simple-java-app'
         IMAGE_TAG            = "${BUILD_NUMBER}"
         // الـ ID اللي عملناه في الـ Credentials
-        DOCKER_HUB_CREDS     = credentials('dockerhub-creds')
+        DOCKER_HUB_CREDS     = credentials('809a68c7-6c14-4536-82d7-98daff0cd233')
     }
 
     stages {
