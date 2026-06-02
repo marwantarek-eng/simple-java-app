@@ -20,15 +20,15 @@ pipeline {
         stage('Build & Package') {
             steps {
                 echo 'Building Java Application using Maven Container...'
-                // استخدمنا المسار الداخلي الفعلي لجينكنز عشان يربطه صح
-                sh 'docker run --rm -v /var/jenkins_home/.m2:/root/.m2 -v /var/jenkins_home/workspace/jenkins-java-iti:/app -w /app maven:3.8.6-openjdk-11 mvn clean package -DskipTests'
+                // بنقش الـ volumes من حاوية جينكنز علطول عشان نقرأ الـ pom.xml صح
+                sh 'docker run --rm --volumes-from jenkins -w /var/jenkins_home/workspace/jenkins-java-iti maven:3.8.6-openjdk-11 mvn clean package -DskipTests'
             }
         }
-
+        
         stage('Test') {
             steps {
                 echo 'Running Unit Tests...'
-                sh 'docker run --rm -v /var/jenkins_home/.m2:/root/.m2 -v /var/jenkins_home/workspace/jenkins-java-iti:/app -w /app maven:3.8.6-openjdk-11 mvn test'
+                sh 'docker run --rm --volumes-from jenkins -w /var/jenkins_home/workspace/jenkins-java-iti maven:3.8.6-openjdk-11 mvn test'
             }
         }
 
