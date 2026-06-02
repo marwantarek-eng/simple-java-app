@@ -37,19 +37,17 @@ pipeline {
         stage('4. Push (Docker Image)') {
             steps {
                 echo 'Building Docker Image and Pushing to Docker Hub...'
-                sh """
-                docker build -t marwantarek/simple-java-app:${BUILD_NUMBER} .
-                docker tag marwantarek/simple-java-app:${BUILD_NUMBER} marwantarek/simple-java-app:latest
+                // استخدمنا سطر واحد مباشر بالفلاج -p عشان نخلص من غتاتة الـ echo
+                sh "docker build -t marwantarek/simple-java-app:\${BUILD_NUMBER} ."
+                sh "docker tag marwantarek/simple-java-app:\${BUILD_NUMBER} marwantarek/simple-java-app:latest"
                 
-                # التعديل هنا: السطر في أمر واحد صريح ومباشر جوه Double Quotes
-                echo 'dckr_pat_eE_a_XQAWoIEWPFSgeS3geAA4yU' | docker login -u marwantarek --password-stdin
+                // سطر اللوجين السحري المباشر
+                sh "docker login -u marwantarek -p dckr_pat_eE_a_XQAWoIEWPFSgeS3geAA4yU"
                 
-                docker push marwantarek/simple-java-app:${BUILD_NUMBER}
-                docker push marwantarek/simple-java-app:latest
-                """
+                sh "docker push marwantarek/simple-java-app:\${BUILD_NUMBER}"
+                sh "docker push marwantarek/simple-java-app:latest"
             }
         }
-
         stage('5. Deploy') {
             steps {
                 echo 'Deploying Application to Production...'
