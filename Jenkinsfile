@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        DOCKER_REGISTRY_USER = 'marwantarek' 
+        DOCKER_REGISTRY_USER = 'marwatarek' // شيلنا الـ n هنا عشان تطابق الأكونت الحقيقي
         IMAGE_NAME           = 'simple-java-app'
         IMAGE_TAG            = "${BUILD_NUMBER}"
         DOCKER_HOST          = 'tcp://172.17.0.1:2375'
@@ -37,14 +37,14 @@ pipeline {
         stage('4. Push (Docker Image)') {
             steps {
                 echo 'Building Docker Image and Pushing to Docker Hub...'
-                sh "docker build -t marwantarek/simple-java-app:\${BUILD_NUMBER} ."
-                sh "docker tag marwantarek/simple-java-app:\${BUILD_NUMBER} marwantarek/simple-java-app:latest"
+                sh "docker build -t marwatarek/simple-java-app:\${BUILD_NUMBER} ."
+                sh "docker tag marwatarek/simple-java-app:\${BUILD_NUMBER} marwatarek/simple-java-app:latest"
                 
-                // أمر اللوجين السحري بالـ Token الجديد والنظيف بتاعك جوه سطر واحد صريح
-                sh "docker login -u marwantarek -p dckr_pat_dGKfkPtWxEXNnLxTJ2KGP1UROVw"
+                // سطر اللوجين المتظبط باليوزر الصح من غير n والتوكن الشغال مية مية
+                sh "docker login -u marwatarek -p dckr_pat_dGKfkPtWxEXNnLxTJ2KGP1UROVw"
                 
-                sh "docker push marwantarek/simple-java-app:\${BUILD_NUMBER}"
-                sh "docker push marwantarek/simple-java-app:latest"
+                sh "docker push marwatarek/simple-java-app:\${BUILD_NUMBER}"
+                sh "docker push marwatarek/simple-java-app:latest"
             }
         }
 
@@ -54,7 +54,7 @@ pipeline {
                 sh '''
                 docker stop simple-java-app-running || true
                 docker rm simple-java-app-running || true
-                docker run -d -p 8081:8080 --name simple-java-app-running marwantarek/simple-java-app:latest
+                docker run -d -p 8081:8080 --name simple-java-app-running marwatarek/simple-java-app:latest
                 '''
                 echo 'Application is live on port 8081!'
             }
