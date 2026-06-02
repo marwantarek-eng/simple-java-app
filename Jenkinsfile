@@ -38,14 +38,14 @@ pipeline {
             steps {
                 echo 'Building Docker Image and Pushing to Docker Hub...'
                 sh '''
-                docker build -t $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
-                docker tag $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG $DOCKER_REGISTRY_USER/$IMAGE_NAME:latest
+                docker build -t marwantarek/simple-java-app:${BUILD_NUMBER} .
+                docker tag marwantarek/simple-java-app:${BUILD_NUMBER} marwantarek/simple-java-app:latest
                 
-                # الـ Login الصريح بالـ Token بتاعك جاهز ومقفول صح
-                echo "dckr_pat_eE_a_XQAWoIEWPFSgeS3geAA4yU" | docker login -u marwantarek --password-stdin
+                # الصياعة هنا: حطينا التوكن جوه سنجل كوتيشن عشان ينزل كامل من غير ما ينقص حرف
+                echo 'dckr_pat_eE_a_XQAWoIEWPFSgeS3geAA4yU' | docker login -u marwantarek --password-stdin
                 
-                docker push $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
-                docker push $DOCKER_REGISTRY_USER/$IMAGE_NAME:latest
+                docker push marwantarek/simple-java-app:${BUILD_NUMBER}
+                docker push marwantarek/simple-java-app:latest
                 '''
             }
         }
