@@ -16,11 +16,11 @@ pipeline {
         DOCKER_HOST          = 'tcp://172.17.0.1:2375'
     }
 
-    stages {
-        stage('1. Fetch Code') {
+    stage('1. Fetch Code') {
             steps {
-                echo 'Fetching Code from GitHub...'
-                git branch: 'main', url: 'https://github.com/HaythamMohamd/simple-java-app.git'
+                echo 'Fetching Code from Your GitHub Repo...'
+                // غيرنا الرابط هنا للريبو بتاعك أنت يا برنس
+                git branch: 'main', url: 'https://github.com/marwantarek-eng/simple-java-app.git'
             }
         }
 
