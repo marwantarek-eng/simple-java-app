@@ -2,12 +2,13 @@ pipeline {
     agent any
     
     environment {
-        // حط اسم الـ repository بتاعك على docker hub هنا
         DOCKER_REGISTRY_USER = 'marwantarek' 
         IMAGE_NAME           = 'simple-java-app'
         IMAGE_TAG            = "${BUILD_NUMBER}"
-        // الـ ID اللي عملناه في الـ Credentials
         DOCKER_HUB_CREDS     = credentials('809a68c7-6c14-4536-82d7-98daff0cd233')
+        
+        // السطر السحري الجديد
+        DOCKER_HOST          = 'tcp://172.17.0.1:2375' 
     }
 
     stages {
