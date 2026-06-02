@@ -19,20 +19,21 @@ pipeline {
             }
         }
 
-        stage('Build & Package') {
-            steps {
-                echo 'Building Java Application using Maven Container...'
-                // بنرن الـ maven جوه كونتينر عشان منوجعش دماغنا بتسطيبه على الـ VM
-                sh 'docker run --rm -v ~/.m2:/root/.m2 -v "$(pwd)":/app -w /app maven:3.8.6-openjdk-11 mvn clean package -DskipTests'
-            }
+    stage('Build & Package') {
+        steps {
+            echo 'Building Java Application using Maven Container...'
+            // زودنا -f simple-java-app/pom.xml عشان يشاور على الملف صح
+            sh 'docker run --rm -v /var/jenkins_home/.m2:/root/.m2 -v "$(pwd)":/app -w /app maven:3.8.6-openjdk-11 mvn clean package -f simple-java-app/pom.xml -DskipTests'
         }
-
-        stage('Test') {
-            steps {
-                echo 'Running Unit Tests...'
-                sh 'docker run --rm -v ~/.m2:/root/.m2 -v "$(pwd)":/app -w /app maven:3.8.6-openjdk-11 mvn test'
-            }
+    }
+    
+    stage('Test') {
+        steps {
+            echo 'Running Unit Tests...'
+            // زودنا -f simple-java-app/pom.xml هنا كمان
+            sh 'docker run --rm -v /var/jenkins_home/.m2:/root/.m2 -v "$(pwd)":/app -w /app maven:3.8.6-openjdk-11 mvn test -f simple-java-app/pom.xml'
         }
+    }
 
         stage('Push to Docker Hub') {
             steps {
