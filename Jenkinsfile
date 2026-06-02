@@ -36,18 +36,23 @@ pipeline {
         }
 
         stage('4. Push (Docker Image)') {
-            steps {
-                echo 'Building Docker Image and Pushing to Docker Hub...'
-                sh '''
-                docker build -t $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG .
-                docker tag $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG $DOCKER_REGISTRY_USER/$IMAGE_NAME:latest
-                
-                echo $DOCKER_HUB_CREDS_PSW | docker login -u $DOCKER_REGISTRY_USER --password-stdin
-                docker push $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
-                docker push $DOCKER_REGISTRY_USER/$IMAGE_NAME:latest
-                '''
-            }
-        }
+                    steps {
+                        echo 'Building Docker Image and Pushing to Docker Hub...'
+                        // هنستخدم الـ token بتاعك مانيوال هنا عشان نضمن الـ Auth 100%
+                        withCredentials([usernamePassword(credentialsId: 'docker--cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                            sh '''
+                            docker build -t marwantarek/simple-java-app:${BUILD_NUMBER} .
+                            docker tag marwantarek/simple-java-app:${BUILD_NUMBER} marwantarek/simple-java-app:latest
+                            
+                            # لو الـ credentialsId ملقطش الـ Token الجديد، حط الـ Token الحقيقي مكان الـ Variable ده مانيوال للتجربة
+                            echo "$DOCKER_PASS" | docker login -u marwantarek --password-stdin
+                            
+                            docker push marwantarek/simple-java-app:${BUILD_NUMBER}
+                            docker push marwantarek/simple-java-app:latest
+                            '''
+                        }
+                    }
+                }
 
         stage('5. Deploy') {
             steps {
