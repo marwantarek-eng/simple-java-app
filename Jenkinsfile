@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        DOCKER_REGISTRY_USER = 'marwatarek' // شيلنا الـ n هنا عشان تطابق الأكونت الحقيقي
+        DOCKER_REGISTRY_USER = 'marwatarek' 
         IMAGE_NAME           = 'simple-java-app'
         IMAGE_TAG            = "${BUILD_NUMBER}"
         DOCKER_HOST          = 'tcp://172.17.0.1:2375'
@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('1. Fetch Code') {
             steps {
-                echo 'Fetching Code from Your GitHub Repo...'
+                echo 'Fetching Code from GitHub...'
                 git branch: 'main', url: 'https://github.com/marwantarek-eng/simple-java-app.git'
             }
         }
@@ -37,14 +37,18 @@ pipeline {
         stage('4. Push (Docker Image)') {
             steps {
                 echo 'Building Docker Image and Pushing to Docker Hub...'
-                sh "docker build -t marwatarek/simple-java-app:\${BUILD_NUMBER} ."
-                sh "docker tag marwatarek/simple-java-app:\${BUILD_NUMBER} marwatarek/simple-java-app:latest"
-                
-                // سطر اللوجين المتظبط باليوزر الصح من غير n والتوكن الشغال مية مية
-                sh "docker login -u marwatarek -p dckr_pat_dGKfkPtWxEXNnLxTJ2KGP1UROVw"
-                
-                sh "docker push marwatarek/simple-java-app:\${BUILD_NUMBER}"
-                sh "docker push marwatarek/simple-java-app:latest"
+                // بننادي على الـ Credential المشفرة من جينكنز وجينكنز بيخفي الباسورد أوتوماتيك بـ **** في الـ Logs
+                withCredentials([usernamePassword(credentialsId: 'docker--cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh """
+                    docker build -t marwatarek/simple-java-app:\${BUILD_NUMBER} .
+                    docker tag marwatarek/simple-java-app:\${BUILD_NUMBER} marwatarek/simple-java-app:latest
+                    
+                    echo "\$PASS" | docker login -u "\$USER" --password-stdin
+                    
+                    docker push marwatarek/simple-java-app:\${BUILD_NUMBER}
+                    docker push marwatarek/simple-java-app:latest
+                    """
+                }
             }
         }
 
