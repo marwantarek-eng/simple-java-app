@@ -37,24 +37,24 @@ pipeline {
         stage('4. Push (Docker Image)') {
             steps {
                 echo 'Building Docker Image and Pushing to Docker Hub...'
-                // استخدمنا سطر واحد مباشر بالفلاج -p عشان نخلص من غتاتة الـ echo
                 sh "docker build -t marwantarek/simple-java-app:\${BUILD_NUMBER} ."
                 sh "docker tag marwantarek/simple-java-app:\${BUILD_NUMBER} marwantarek/simple-java-app:latest"
                 
-                // سطر اللوجين السحري المباشر
-                sh "docker login -u marwantarek -p dckr_pat_eE_a_XQAWoIEWPFSgeS3geAA4yU"
+                // أمر اللوجين السحري بالـ Token الجديد والنظيف بتاعك جوه سطر واحد صريح
+                sh "docker login -u marwantarek -p dckr_pat_dGKfkPtWxEXNnLxTJ2KGP1UROVw"
                 
                 sh "docker push marwantarek/simple-java-app:\${BUILD_NUMBER}"
                 sh "docker push marwantarek/simple-java-app:latest"
             }
         }
+
         stage('5. Deploy') {
             steps {
                 echo 'Deploying Application to Production...'
                 sh '''
                 docker stop simple-java-app-running || true
                 docker rm simple-java-app-running || true
-                docker run -d -p 8081:8080 --name simple-java-app-running $DOCKER_REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG
+                docker run -d -p 8081:8080 --name simple-java-app-running marwantarek/simple-java-app:latest
                 '''
                 echo 'Application is live on port 8081!'
             }
