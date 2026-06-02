@@ -37,16 +37,16 @@ pipeline {
         stage('4. Push (Docker Image)') {
             steps {
                 echo 'Building Docker Image and Pushing to Docker Hub...'
-                sh '''
+                sh """
                 docker build -t marwantarek/simple-java-app:${BUILD_NUMBER} .
                 docker tag marwantarek/simple-java-app:${BUILD_NUMBER} marwantarek/simple-java-app:latest
                 
-                # الصياعة هنا: حطينا التوكن جوه سنجل كوتيشن عشان ينزل كامل من غير ما ينقص حرف
+                # التعديل هنا: السطر في أمر واحد صريح ومباشر جوه Double Quotes
                 echo 'dckr_pat_eE_a_XQAWoIEWPFSgeS3geAA4yU' | docker login -u marwantarek --password-stdin
                 
                 docker push marwantarek/simple-java-app:${BUILD_NUMBER}
                 docker push marwantarek/simple-java-app:latest
-                '''
+                """
             }
         }
 
